@@ -12,7 +12,7 @@ The random variable representing the number of people calling at a given time fo
 tribution, with calls being independent from each other. You’re also thinking about estimating the binomial
 ditribution with a Poisson distribution, so it can be used on a larger scale.
 
-Your first task is to compute the binomial coefficient n over k given k and n (emphasizing the computation speed and stack optimization).
+Your first task is to compute the binomial coefficient \binom{N}{k} given k and n (emphasizing the computation speed and stack optimization).
 
 Your second task is to compare the binomial and Poisson distributions, given the average duration of calls,
 by printing:

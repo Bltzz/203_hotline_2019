@@ -1,0 +1,110 @@
+#!/usr/bin/env python3
+import sys
+from math import factorial as fac
+import math
+import time
+
+
+def binominal(n, k):
+    if k < 0 or k > n:
+        return 0
+
+    if k == 0 or k == n:
+        return 1
+    res = 1
+    for i in range(1, min(k, n - k) + 1):
+        res *= n
+        res //= i
+        n -= 1
+    return res
+
+
+def binomialCalc(p, n, k):
+    tmp = (binominal(n, k) * (p**k) * (1 - p)**(n-k))
+    return tmp
+
+
+def PoissonCalc(lam, n):
+    return ((math.exp((-1) * lam) * lam**n) / fac(n))
+
+######################################################################################################################################
+#################################################### Binomial Distribution ###########################################################
+######################################################################################################################################
+
+def n_calcBin(n):
+    print("Binomial distribution:")
+    var = n / 28800  # 28800 = 8h * 60min * 60 sec
+    overload = 0.0
+    start = time.time()
+    for i in range(0, 51):
+        res = binomialCalc(var, 3500, i)
+        print(i, "-> %.3f" % res, end='')
+        if (i not in [4, 9, 14, 19, 24, 29, 34, 39, 44, 49, 50]):
+            print(end='\t')
+        else:
+            print(end='\n')
+        if (i <= 25):
+            overload += res
+    end = time.time()
+    print("Overload: %.1f%%" % ((1 - overload) * 100))
+    print("Computation time %.2f ms\n" % ((end - start) * 1000))
+
+######################################################################################################################################
+#################################################### Poisson Distribution ############################################################
+######################################################################################################################################
+
+def n_calcPoiss(n):
+    print("Poisson distribution:")
+    overload = 0.0
+    lam = ((n / 3600) * 3500) / 8   # recalc n (sec) to h, multiply by expected value
+    start2 = time.time()
+    for i in range(0, 51):
+        var2 = PoissonCalc(lam, i)
+        print(i, "-> %.3f" % var2, end='')
+        if (i not in [4, 9, 14, 19, 24, 29, 34, 39, 44, 49, 50]):
+            print(end='\t')
+        else:
+            print(end='\n')
+        if (i <= 25):
+            overload += var2
+    end2 = time.time()
+    print("Overload: %.1f%%" % ((1 - overload) * 100))
+    print("Computation time: %.2f ms" % ((end2 - start2) * 1000))
+
+
+def nk_calc(n, k):
+    print(k, "-combinations of a set of size ", n, ":\n", binominal(n, k), sep='')
+
+
+def main():
+    if (len(sys.argv) < 2 or len(sys.argv) > 3):
+        print("An Error has occured! Invalid Argument!")
+        sys.exit(84)
+    else:
+        try:
+            if (len(sys.argv) == 2 and sys.argv[1] == "-h"):
+                print(
+                    "USAGE\n\t./203hotline [n k | d]\n\nDESCRIPTION\n\tn\tn values for the computation of C(n, k)\n\tk\tk value for the computation of C(n, k)\n\td\taverage duration of calls (in seconds)")
+                sys.exit(84)
+            if (len(sys.argv) == 3):
+                n = int(sys.argv[1])
+                k = int(sys.argv[2])
+                if (n < k or n < 0 or k < 0):
+                    print("n has to be greater than k and both values greater than 0.")
+                    sys.exit(84)
+                nk_calc(n, k)
+            if (len(sys.argv) == 2):
+                n = int(sys.argv[1])
+                if (n < 0):
+                    print("d has to be greater than 0")
+                    sys.exit(84)
+                n_calcBin(n)
+                n_calcPoiss(n)
+        except ValueError:
+            print("Values have to be Integer format (Without decimals and no letters)!")
+            sys.exit(84)
+        sys.exit(0)
+
+
+if __name__ == '__main__':
+    main()
